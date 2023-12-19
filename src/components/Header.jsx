@@ -1,14 +1,21 @@
 import React, { useCallback, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import logo from '../logo.svg'
 import { Context } from '../context'
 import classnames from 'classnames'
+import axios from 'axios'
 
 function Header () {
   const { context, dispatch } = useContext(Context)
   const switchTheme = useCallback(() => {
     dispatch({ type: 'switchTheme' })
   }, [dispatch])
+const handleLogout = useCallback(() => {
+  dispatch({ type: 'logout' })
+  axios.defaults.headers.common['Authorization'] = '';
+  Navigate('/login');
+}, [dispatch])
+
   return (
     <nav className={classnames('navbar navbar-expand-md',
       context.theme === 'light' ? 'navbar-dark bg-dark' : 'navbar-light bg-secondary',
@@ -42,7 +49,7 @@ function Header () {
         </div>
         <div className="navbar-text">
           {context.user.name
-            ? <div>Bienvenue {context.user.name}</div>
+            ? <div>Bienvenue {context.user.name} <button onClick={handleLogout}>Déconnexion</button></div>
             : <div>
               <Link to="/login">Connectez-vous</Link>
               <br/>ou&nbsp;
